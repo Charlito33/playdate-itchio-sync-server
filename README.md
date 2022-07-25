@@ -1,7 +1,8 @@
 # playdate-itchio-sync
 
 Keep your Playdate sideload games synced with your itch.io playdate game library.
-This repo is to make playdate-itchio-sync a Express NodeJS app.
+
+The goal of this repo is to make playdate-itchio-sync a Express NodeJS app.
 
 ## Requirements
 - node.js 16+
