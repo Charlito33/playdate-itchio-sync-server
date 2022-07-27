@@ -1,15 +1,18 @@
-import jsdom from "jsdom";
-import { fileFromPath } from "formdata-node/file-from-path";
-import { FormData } from "formdata-node";
-import fetchCookie from "fetch-cookie";
-import nodeFetch from "node-fetch";
+const jsdom = require("jsdom");
+//import { fileFromPath } from "formdata-node/file-from-path";
+//import { FormData } from "formdata-node";
+const fetchCookie = require("fetch-cookie");
+const nodeFetch = require("node-fetch");
+const {CookieJar} = require("jsdom");
 
 const { JSDOM } = jsdom;
 
-const fetch = fetchCookie(nodeFetch);
+//const fetch = fetchCookie(nodeFetch, jar);
 
-async function getCSRF(url) {
-  const response = await fetch(url);
+async function getCSRF(url, jar) {
+  const fetch = fetchCookie(nodeFetch, jar);
+
+  const response = await fetch(url, jar);
   const text = await response.text();
 
   const dom = new JSDOM(text);
@@ -18,15 +21,19 @@ async function getCSRF(url) {
     .getAttribute("value");
 }
 
-export async function login(username, password) {
-  const token = await getCSRF("https://play.date/signin/");
+exports.login = async function(username, password) {
+  const jar = new CookieJar();
+
+  const token = await getCSRF("https://play.date/signin/", jar);
 
   const body = new URLSearchParams();
   body.append("csrfmiddlewaretoken", token);
   body.append("username", username);
   body.append("password", password);
 
-  return fetch("https://play.date/signin/", {
+  const fetch = fetchCookie(nodeFetch, jar);
+
+  await fetch("https://play.date/signin/", {
     body: body.toString(),
     method: "POST",
     headers: {
@@ -34,13 +41,19 @@ export async function login(username, password) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   });
+
+  return jar;
 }
 
-export async function getSideloads() {
+exports.getSideloads = async function(jar) {
   const games = [];
 
-  const response = await fetch("https://play.date/account/");
+  const fetch = fetchCookie(nodeFetch, jar);
+
+  const response = await fetch("https://play.date/account/", jar);
   const text = await response.text();
+
+  console.log(text);
 
   const dom = new JSDOM(text);
   const children = dom.window.document.querySelector(".game-list").children;
@@ -72,6 +85,7 @@ export async function getSideloads() {
   return games;
 }
 
+/*
 export async function uploadGame(path) {
   const token = await getCSRF("https://play.date/account/sideload/");
 
@@ -87,3 +101,4 @@ export async function uploadGame(path) {
     },
   });
 }
+*/

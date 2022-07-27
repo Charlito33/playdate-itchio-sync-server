@@ -1,7 +1,7 @@
-import fetch from "node-fetch";
-import fs from "fs";
+const fetch = require("node-fetch");
+const fs = require("fs");
 
-export async function login(username, password) {
+exports.login = async function (username, password) {
   const params = new URLSearchParams();
   params.append("username", username);
   params.append("password", password);
@@ -18,6 +18,7 @@ export async function login(username, password) {
   return response.json();
 }
 
+/*
 export async function getGames(authorization) {
   const response = await fetch("https://api.itch.io/profile/owned-keys", {
     headers: {
@@ -77,3 +78,4 @@ export async function downloadGame(game, authorization) {
   });
   return upload.filename;
 }
+*/
