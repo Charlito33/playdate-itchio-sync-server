@@ -110,7 +110,9 @@ exports.checkAuthToken = async function(query, req, res) {
             "error": "missing_auth_token",
             "error_message": "Missing Authentication token"
         });
-        return res.end();
+        res.end();
+
+        return [true, null];
     }
 
     const authToken = req.header("Authentication");
@@ -121,7 +123,9 @@ exports.checkAuthToken = async function(query, req, res) {
             "error": "invalid_auth_token",
             "error_message": "Invalid Authentication token"
         });
-        return res.end();
+        res.end();
+
+        return [true, null];
     }
 
     const decodedToken = decodeToken(authToken);
