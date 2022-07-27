@@ -130,7 +130,7 @@ app.post("/auth/revoke", async (req, res) => {
     }
 });
 
-app.post("/sideloads", async (req, res) => {
+app.get("/sideload/list", async (req, res) => {
     let [err, token] = await utils.checkAuthToken(query, req, res);
 
     if (err) {
